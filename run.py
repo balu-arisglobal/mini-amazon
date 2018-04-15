@@ -28,15 +28,33 @@ def addProducts():
             return Response("Product with name \t" + str(request.form['name']) + " \t and count: " + str(result.deleted_count) + " successfully deleted........")
 
         elif request.form['op_type'] == "update":
-            selectedValue = request.form.get('productParam')
+            result = db.products.find({'product name': request.form['name']})
+            if result.count() > 0:
+                selectedValue = request.form.get('productParam')
+                if selectedValue == "productName":
+                    #oldName = result.next().get("product name")
+                    db.products.update_one(
+                        {'product name': request.form['name']},
+                        {'$set': {"product name": request.form['valueToBeUpdated']}}
+                    )
+                    return Response ("Product Name is updated")
 
-            def f(selectedValue):
-                return {
-                    'a': 1,
-                    'b': 2
-                }.get(selectedValue, return Response("Selected param Not Found"))
+                elif selectedValue == "productDescription":
+                    db.products.update_one(
+                        {'product name': request.form['name']},
+                        {'$set': {"product description": request.form['valueToBeUpdated']}}
+                    )
+                    return Response("Product description is updated")
 
+                elif selectedValue == "productCost":
+                    db.products.update_one(
+                        {'product name': request.form['name']},
+                        { '$set': {"cost": request.form['valueToBeUpdated']}}
+                    )
+                    return Response("Product cost is updated")
 
+            else:
+               return Response("Product with name " + str(request.form['name']) + "  was not found....")
 
     elif request.method == 'GET':
         matching_items = db.products.find({'product name': re.compile(request.args['name'], re.IGNORECASE)})
