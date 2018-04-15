@@ -1,0 +1,42 @@
+<h1> Hello Admin.. </h1>
+
+
+<h3>Enter the details for the product to be added</h3>
+<form  action="/products" method="POST">
+  <input type="text" name="op_type" value="insert" hidden>
+    Product name:<br>
+  <input type="text" name="name" required><br>
+  Product description:<br>
+  <input type="text" name="desc" required><br>
+    Cost: <br>
+    <input type="text" name="cost" required><br>
+     <input type="submit" value="Submit">
+</form>
+
+<h3>Enter the product name to be deleted</h3>
+<form  action="/products" method="POST">
+    <input type="text" name="op_type" value="delete" hidden>
+    Product name:<br>
+  <input type="text" name="name" required><br>
+     <input type="submit" value="Submit">
+</form>
+
+
+<h3>Enter the product you want to update</h3>
+<form  action="/products" method="POST">
+    <input type="text" name="op_type" value="update" hidden>
+    Enter the product Name to be updated: <br>
+  <input type="text" name="name" required><br>
+
+    Select what has to be updated:<br> <br>
+
+        <select name="productParam">
+          <option value="productName">Product Name</option>
+          <option value="productDescription">Product Description</option>
+          <option value="productCost">Product Cost</option>
+        </select>
+
+    <br> <br> Value to be updated: <br>
+  <input type="text" name="name" required><br>
+     <input type="submit" value="Submit">
+</form>
