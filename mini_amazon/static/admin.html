@@ -4,9 +4,9 @@
 <h3>Enter the details for the product to be added</h3>
 <form  action="/products" method="POST">
   <input type="text" name="op_type" value="insert" hidden>
-    Product name:<br>
+    product_name:<br>
   <input type="text" name="name" required><br>
-  Product description:<br>
+  product_description:<br>
   <input type="text" name="desc" required><br>
     Cost: <br>
     <input type="text" name="cost" required><br>
@@ -16,7 +16,7 @@
 <h3>Enter the product id to be deleted</h3>
 <form  action="/products" method="POST">
     <input type="text" name="op_type" value="delete" hidden>
-    Product name:<br>
+    product_name:<br>
   <input type="text" name="id" required><br>
      <input type="submit" value="Submit">
 </form>
@@ -31,8 +31,8 @@
     Select what has to be updated:<br> <br>
 
         <select name="productParam">
-          <option value="productName">Product Name</option>
-          <option value="productDescription">Product Description</option>
+          <option value="productName">product_name</option>
+          <option value="productDescription">product_description</option>
           <option value="productCost">Product Cost</option>
         </select>
 
