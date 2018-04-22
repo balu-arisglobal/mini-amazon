@@ -1,6 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>user</title>
+</head>
+<script type="text/javascript">
+    function myFunction() {
+    var x = document.getElementById("signUpDiv");
+    var y = document.getElementById("loginDiv");
+    if (x.style.display === "none") {
+        x.style.display = "block";
+        y.style.display = "none";
+    } else {
+        x.style.display = "none";
+        y.style.display = "block";
+    }
+}
+</script>
+<body>
 <h1> welcome to mini amazon </h1>
+
+<h3> Please Login</h3>
+
+<div id = "loginDiv">
+    <h3>Enter the user details </h3>
+    <form  action="/users/login" method="POST">
+  <input type="text" name="op_type" value="insert" hidden>
+    user name:<br>
+  <input type="text" name="userName" required><br>
+  password:<br>
+  <input type="text" name="password" required><br>
+     <input type="submit" value="Login">
+</form>
+
+    <button id = "signin" onclick="myFunction()"> Click for Sign up </button> <br>
+</div>
+<div id = "signUpDiv" style="display:none">
+    <h3>Enter the user details </h3>
+    <form  action="/users/signup" method="POST">
+  <input type="text" name="op_type" value="insert" hidden>
+    user name:<br>
+  <input type="text" name="userName" required><br>
+  password:<br>
+  <input type="text" name="password" required><br>
+    confirm password: <br>
+    <input type="text" name="confirmPassword" required><br>
+     <input type="submit" value="Sign Up">
+</form>
+
+</div>
 
 <a href="admin.html"> Click Here, if you're admin and want to add the products </a><br>
 <a href="search.html"> Click Here, if you're user and want to seacrh the products </a><br>
-<!--<a href="user.html"> Click Here, if you want to add an user </a><br>-->
+<a href="user.html"> Click Here, if you want to add an user </a><br>
+
+</body>
+</html>
 

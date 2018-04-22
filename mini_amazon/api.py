@@ -56,19 +56,30 @@ def listAllUsers():
     return user.findAll()
 
 
-@app.route('/users', methods=['POST', 'GET'])
-def addUser():
+@app.route('/users/<action>', methods=['POST', 'GET'])
+def addUser(action):
     if request.method == 'POST':
         if request.form['op_type'] == "insert":
-            if request.form['password'] == request.form['confirmPassword']:
-                userDetails = {}
-                userDetails['user_name'] = request.form['userName'];
-                userDetails['user_password'] = request.form['password'];
-                user.saveUser(userDetails)
-                return Response("User Details saved successfully.......", mimetype="application/json")
+            if action == "signup":
+                if request.form['password'] == request.form['confirmPassword']:
+                    userDetails = {}
+                    userDetails['user_name'] = request.form['userName'];
+                    userDetails['user_password'] = request.form['password'];
+                    isSuccess = user.saveUser(userDetails)
+                    print(isSuccess['status'])
+                    if isSuccess['status'] == "success":
+                         return render_template('home.html', user=isSuccess['user'])
+                    elif isSuccess['status'] == "fail":
+                        return Response("User already exists.......", mimetype="application/json")
 
-            else:
-                return Response("Passwords does not match", mimetype="application/json")
+                else:
+                    return Response("Passwords does not match", mimetype="application/json")
 
+
+            elif action == "login":
+                user_detail = user.search_user(request.form['userName'],request.form['password'])
+                if user_detail['result'] == "true":
+                    return render_template('home.html', user=user_detail['user'])
+                return Response(str(user_detail['result']))
 
 
