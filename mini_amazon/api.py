@@ -2,6 +2,7 @@ from flask import request, Response, render_template, session
 import os
 from models.user import User
 from models.product import Product
+from bson.objectid import ObjectId
 from mini_amazon import app
 
 prod = Product()
@@ -30,12 +31,15 @@ def addProducts():
 
         elif request.form['op_type'] == "add_to_user_cart":
             if session.get('user_name') is not '':
-                user_details = user.check_if_userexists(session.get('user_name'))
+                cart_product_details = []
+                user_details = user.check_if_userexists(session.get('user_id'))
                 if user_details != None:
-                    print (user_details)
-                    print (request.form['id'])
                     result = prod.add_to_cart(user_details,request.form['id'])
-                    return Response("Status ::" + result['status'] + "<br> Meesage :: "+ result['message'])
+                    cart_product_details = user.get_products_in_usercart(user_details['_id'])
+                    if result['status'] == "success":
+                        return render_template('cart.html', results = cart_product_details)
+                    else:
+                        return render_template('cart.html', results=cart_product_details,message = result['message'])
                 else:
                     return render_template('index.html',message="Invalid User. Please login again .......")
             else:
@@ -53,9 +57,8 @@ def addProducts():
                     matches.append(item)
 
                 if contentType == 'html':
-                      if session.get('user_name') != None:
-                        print (session.get('user_name'))
-                        return render_template('results.html', query = itemToBeSearched, results = matches, loggedinUser = session.get('user_name'))
+                      if session.get('user_id') != None:
+                        return render_template('results.html', query = itemToBeSearched, results = matches, loggedinUser = session.get('user_id'))
                       else:
                           return render_template('index.html',message="User ession seems to be expired. Please login again .......")
                 else:
@@ -88,7 +91,7 @@ def addUser(action):
                     print(isSuccess['status'])
                     if isSuccess['status'] == "success":
                          session['logged_in'] = isSuccess['logged_in']
-                         session['user_name'] = isSuccess['user']
+                         session['user_id'] = str(isSuccess['user_id'])
                          return render_template('home.html', user=session['user_name'])
                     elif isSuccess['status'] == "fail":
                         return render_template('index.html', message="User already exists.......")
@@ -101,8 +104,19 @@ def addUser(action):
                 user_detail = user.search_user(request.form['userName'],request.form['password'])
                 if user_detail['result'] == "true":
                     session['logged_in'] = True
-                    session['user_name'] = user_detail['user']
-                    return render_template('home.html', user=session['user_name'])
+                    print(user_detail['user_id'])
+                    session['user_id'] = str(user_detail['user_id'])
+                    return render_template('home.html', user=user_detail['user_name'])
                 return render_template('index.html', message="Passwords does not match.......")
 
 
+@app.route('/cart', methods=['POST', 'GET'])
+def products_cart():
+    if request.method == 'POST':
+       if request.form['op_type'] == "delete":
+           results = user.delete_product_from_cart(session.get('user_id'),str(request.form['product_id']))
+           return render_template('cart.html', results=results)
+
+    elif request.method == 'GET':
+        results = user.get_products_in_usercart(ObjectId(session.get('user_id')))
+        return render_template('cart.html', results=results)

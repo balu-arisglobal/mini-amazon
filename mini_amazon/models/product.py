@@ -62,6 +62,10 @@ class Product:
         else:
             return "Empty List! No data found."
 
+    def find_product_by_id(self, id):
+        result = self.db.products.find({'_id': ObjectId(id)})
+        return result[0] if result.count > 0 else None
+
 
     #product id is not stored as bson object itself. we need tp bind it if we want to search in product table
     def add_to_cart(self, user_details, product_id):

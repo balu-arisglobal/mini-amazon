@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cart</title>
+</head>
+
+<script>
+    var total_cost = 0;
+    var products = '';
+    function add_cost_and_productname(cost, product){
+        total_cost += cost;
+        products += product + ",";
+    }
+
+    function return_total_cost(){
+        document.getElementById("total_cost").innerHTML = "Total Cost is ::" + total_cost;
+        document.getElementById("amount_id").value = total_cost;
+        document.getElementById("items_id").value = products;
+    }
+</script>
+<body>
+
+<h4>Welcome to you cart</h4>
+<p style="color:red" id="messagePar"> {{ message }} </p>
+<h3> {{ results|length }} Items in your cart </h3>
+{% for res in results %}
+<div>
+    <b> {{ res.product_name}} </b> <br>
+    Cost :: {{ res.cost}}
+    <script>add_cost_and_productname({{ res.cost }}, '{{ res.product_name }}');</script>
+    <form  action="/cart" method="POST">
+    <input type="text" name="op_type" value="delete" hidden>
+    <input type="text" name="product_id" value ="{{ res._id }}" hidden><br>
+     <input type="submit" value="Click here to remove this product">
+    </form>
+</div>
+<hr>
+{% endfor %}
+
+<p id="total_cost"> </p>
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+
+  <!-- Identify your business so that you can collect the payments. -->
+  <input type="hidden" name="business" value="balumatta01@gmail.com">
+
+  <!-- Specify a Buy Now button. -->
+  <input type="hidden" name="cmd" value="_xclick">
+  <!-- Specify details about the item that buyers will purchase. -->
+<input type="hidden" name="item_name" id = "items_id" value="">
+  <input type="hidden" name="amount" id = "amount_id" value="">
+  <input type="hidden" name="currency_code" value="INR">
+
+  <!-- Display the payment button. -->
+  <br><input type="submit" border="0"
+  value="Proceed to Check Out">
+  <img alt="" border="0" width="1" height="1"
+  src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" >
+</form>
+
+<script>return_total_cost();</script>
+</body>
+</html>
