@@ -1,5 +1,7 @@
 from pymongo import MongoClient
+from flask import session
 import re
+import jwt
 from bson.objectid import ObjectId
 
 class User:
@@ -16,7 +18,7 @@ class User:
             return {"status": "fail", "user": user["user_name"]}
         else:
             self.db.users.insert(user)
-            return {"status": "success", "user": user["user_name"]}
+            return {"status": "success", "user": user['user_name'],"logged_in": True }
 
     def findAll(self):
         allItems =self.db.users.find()
@@ -42,3 +44,12 @@ class User:
         else:
             return {'result':"User does not exists"}
 
+
+    def check_if_userexists(self, user_name):
+        user_details = self.db.users.find({'user_name': user_name})
+        if user_details.count() > 0:
+            for item in user_details:
+                return item
+
+        else:
+            return ''

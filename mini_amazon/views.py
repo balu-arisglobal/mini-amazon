@@ -1,10 +1,23 @@
-from flask import send_from_directory, render_template
+from flask import send_from_directory, render_template, session
+import os
 from mini_amazon import app
 
 
-@app.route('/', methods=['GET'])
-def index():
-    return send_from_directory('mini_amazon/static', 'index.html')
+
+@app.route('/')
+def home():
+    if not session.get('logged_in'):
+        return render_template('index.html')
+    else:
+        return render_template('home.html', user=session.get('user_name'))
+
+
+@app.route("/logout")
+def logout():
+     session['logged_in'] = False
+     session['user_name'] = None
+     return render_template('index.html', message="Logged out successfully .......")
+
 
 
 @app.route('/user.html', methods=['GET'])

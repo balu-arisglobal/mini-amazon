@@ -1,4 +1,5 @@
-from flask import request, Response, render_template
+from flask import request, Response, render_template, session
+import os
 from models.user import User
 from models.product import Product
 from mini_amazon import app
@@ -27,6 +28,18 @@ def addProducts():
             return prod.update_product(request.form['id'], request.form.get('productParam'),
                                        request.form['valueToBeUpdated'])
 
+        elif request.form['op_type'] == "add_to_user_cart":
+            if session.get('user_name') is not '':
+                user_details = user.check_if_userexists(session.get('user_name'))
+                if user_details != None:
+                    print (user_details)
+                    print (request.form['id'])
+                    result = prod.add_to_cart(user_details,request.form['id'])
+                    return Response("Status ::" + result['status'] + "<br> Meesage :: "+ result['message'])
+                else:
+                    return render_template('index.html',message="Invalid User. Please login again .......")
+            else:
+                return render_template('index.html', message="User ession seems to be expired. Please login again .......")
 
     elif request.method == 'GET':
             itemToBeSearched = request.args['name']
@@ -40,7 +53,11 @@ def addProducts():
                     matches.append(item)
 
                 if contentType == 'html':
-                    return render_template('results.html', query = itemToBeSearched, results = matches)
+                      if session.get('user_name') != None:
+                        print (session.get('user_name'))
+                        return render_template('results.html', query = itemToBeSearched, results = matches, loggedinUser = session.get('user_name'))
+                      else:
+                          return render_template('index.html',message="User ession seems to be expired. Please login again .......")
                 else:
                     return Response("Product details are " + str(matches), mimetype="application/json")
 
@@ -63,23 +80,29 @@ def addUser(action):
             if action == "signup":
                 if request.form['password'] == request.form['confirmPassword']:
                     userDetails = {}
+                    user_cart = []
                     userDetails['user_name'] = request.form['userName'];
                     userDetails['user_password'] = request.form['password'];
+                    userDetails['user_cart'] = user_cart
                     isSuccess = user.saveUser(userDetails)
                     print(isSuccess['status'])
                     if isSuccess['status'] == "success":
-                         return render_template('home.html', user=isSuccess['user'])
+                         session['logged_in'] = isSuccess['logged_in']
+                         session['user_name'] = isSuccess['user']
+                         return render_template('home.html', user=session['user_name'])
                     elif isSuccess['status'] == "fail":
-                        return Response("User already exists.......", mimetype="application/json")
+                        return render_template('index.html', message="User already exists.......")
 
                 else:
-                    return Response("Passwords does not match", mimetype="application/json")
+                    return render_template('index.html', message="Passwords does not match.......")
 
 
             elif action == "login":
                 user_detail = user.search_user(request.form['userName'],request.form['password'])
                 if user_detail['result'] == "true":
-                    return render_template('home.html', user=user_detail['user'])
-                return Response(str(user_detail['result']))
+                    session['logged_in'] = True
+                    session['user_name'] = user_detail['user']
+                    return render_template('home.html', user=session['user_name'])
+                return render_template('index.html', message="Passwords does not match.......")
 
 

@@ -61,3 +61,21 @@ class Product:
             return "Product details are " + str(matches)
         else:
             return "Empty List! No data found."
+
+
+    #product id is not stored as bson object itself. we need tp bind it if we want to search in product table
+    def add_to_cart(self, user_details, product_id):
+        user_cart = []
+        if 'user_cart' in user_details:
+            user_cart = user_details['user_cart']
+            if product_id not in user_cart:
+                user_cart.append(product_id)
+                user_details['user_cart'] = user_cart
+                self.db.users.update_one({'_id': user_details['_id']}, {'$set': user_details})
+                return {'status':'success', 'message':'product added to the cart'}
+            return {'status': 'fail', 'message': 'product already exists in the cart'}
+        else:
+            user_cart.append(product_id)
+            user_details['user_cart'] = user_cart
+            self.db.users.update_one({'_id': user_details['_id']},{'$set': user_details})
+            return {'status': 'success', 'message': 'product added to the cart'}

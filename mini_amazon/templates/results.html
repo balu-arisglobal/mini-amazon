@@ -5,7 +5,10 @@
     <title>Results</title>
 </head>
 <body>
-<h3> {{ results|length }} found for  :: {{ query }} </h3>
+
+<h4>Logged in user ::  {{ loggedinUser}}</h4>
+<p style="color:red" id="messagePar"> {{ message }} </p>
+<h3> {{ results|length }} results found for search :: {{ query }} </h3>
 {% for res in results %}
 <div>
     <b> {{ res.product_name}} </b> <br>
@@ -16,6 +19,11 @@
     <input type="text" name="op_type" value="delete" hidden>
     <input type="text" name="id" value ="{{ res._id }}" hidden><br>
      <input type="submit" value="Click here to delete this product">
+    </form>
+    <form action="/products" method="POST">
+        <input type="text" name="op_type" value="add_to_user_cart" hidden>
+        <input type="text" name="id" value="{{ res._id }}" hidden>
+        <input type="submit" value="Add to cart">
     </form>
 
     <form  action="/products" method="POST">
@@ -54,7 +62,6 @@
   alt="Buy Now">
   <img alt="" border="0" width="1" height="1"
   src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" >
-
 </form>
 </div>
 <hr>

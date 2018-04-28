@@ -6,5 +6,22 @@
 </head>
 <body>
 <h1> Welcome Dear, Mr/Ms.{{ user }}</h1>
+
+<form  action="/products" method="GET">
+  Enter the product_name you want to search:<br>
+  <input type="text" name="name" required><br>
+    <input type="text" name="content_type" value="html" hidden><br>
+     <input type="submit" value="Submit"> <br>
+
+</form>
+
+<form  action="/listProducts" method="GET">
+  <input type="submit" value="Click here if you want to list all products" >
+</form>
+
+<form  action="/logout" method="GET">
+  <input type="submit" value="Click here to Logout" >
+</form>
+
 </body>
 </html>

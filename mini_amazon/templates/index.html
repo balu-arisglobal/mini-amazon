@@ -17,14 +17,16 @@
         y.style.display = "block";
     }
 }
+
+
 </script>
 <body>
 <h1> welcome to mini amazon </h1>
 
-<h3> Please Login</h3>
+<p style="color:red" id="messagePar"> {{ message }} </p>
 
 <div id = "loginDiv">
-    <h3>Enter the user details </h3>
+<h3> Please Login</h3>
     <form  action="/users/login" method="POST">
   <input type="text" name="op_type" value="insert" hidden>
     user name:<br>
@@ -34,26 +36,22 @@
      <input type="submit" value="Login">
 </form>
 
-    <button id = "signin" onclick="myFunction()"> Click for Sign up </button> <br>
+   <br> <button id = "signin" onclick="myFunction()"> Click for Sign up </button> <br>
 </div>
 <div id = "signUpDiv" style="display:none">
-    <h3>Enter the user details </h3>
-    <form  action="/users/signup" method="POST">
+    <h3> Please Sign in</h3>
+    <form  action="/users/signup" name="signin_form" method="POST">
   <input type="text" name="op_type" value="insert" hidden>
     user name:<br>
   <input type="text" name="userName" required><br>
   password:<br>
-  <input type="text" name="password" required><br>
+  <input type="text" name="password"  id="password" required><br>
     confirm password: <br>
-    <input type="text" name="confirmPassword" required><br>
-     <input type="submit" value="Sign Up">
+    <input type="text" name="confirmPassword" id="confirmPassword" required><br>
+     <input type="submit" value="Sign Up" id="signInButton" onclick="signOnClick()">
 </form>
 
 </div>
-
-<a href="admin.html"> Click Here, if you're admin and want to add the products </a><br>
-<a href="search.html"> Click Here, if you're user and want to seacrh the products </a><br>
-<a href="user.html"> Click Here, if you want to add an user </a><br>
 
 </body>
 </html>
