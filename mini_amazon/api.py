@@ -30,7 +30,7 @@ def addProducts():
                                        request.form['valueToBeUpdated'])
 
         elif request.form['op_type'] == "add_to_user_cart":
-            if session.get('user_name') is not '':
+            if session.get('user_id') is not '':
                 cart_product_details = []
                 user_details = user.check_if_userexists(session.get('user_id'))
                 if user_details != None:

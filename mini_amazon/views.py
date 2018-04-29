@@ -9,13 +9,13 @@ def home():
     if not session.get('logged_in'):
         return render_template('index.html')
     else:
-        return render_template('home.html', user=session.get('user_name'))
+        return render_template('home.html', user=session.get('user_id'))
 
 
 @app.route("/logout")
 def logout():
      session['logged_in'] = False
-     session['user_name'] = None
+     session['user_id'] = None
      return render_template('index.html', message="Logged out successfully .......")
 
 
