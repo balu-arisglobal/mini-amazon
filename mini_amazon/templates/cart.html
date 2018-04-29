@@ -5,59 +5,53 @@
     <title>Cart</title>
 </head>
 
-<script>
+<script type="text/javascript">
     var total_cost = 0;
     var products = '';
+    var number_of_items = 0;
     function add_cost_and_productname(cost, product){
         total_cost += cost;
         products += product + ",";
+        number_of_items ++;
     }
 
-    function return_total_cost(){
-        document.getElementById("total_cost").innerHTML = "Total Cost is ::" + total_cost;
-        document.getElementById("amount_id").value = total_cost;
-        document.getElementById("items_id").value = products;
+
+    function render_dynamic_template(status){
+        var content = '';
+        if (status == "failure"){
+            content = '<form  action="/listProducts" method="GET">Want to see All Products and Add to cart ??<input type="submit" value="Click here.."></form>';
+        }else{
+               content += '<h3> {{ results|length }} Items in your cart </h3>';
+               content += '{% for res in results %}';
+               content += '<div><b> {{ res.product_name}} </b> <br>Cost :: {{ res.cost}}';
+               content += '<form  action="/cart" method="POST">';
+                content += '<input type="text" name="op_type" value="delete" hidden>';
+                content += '<input type="text" name="product_id" value ="{{ res._id }}" hidden><br>';
+                content += '<input type="submit" value="Click here to remove this product">';
+                content += '</form></div><hr>{% endfor %}';
+                content += 'Total Cost is :: {{ total_count }}';
+                content += '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">';
+                content += ' <input type="hidden" name="cmd" value="_cart">';
+                content += ' <input type="hidden" name="upload" value="1">';
+                content += ' <input type="hidden" name="business" value="info@michaeliahotel.com">';
+                content += ' <input type="hidden" name="currency_code" value="USD">';
+                content += '{% for res in results %}';
+                content += '<input type="hidden" name="{{ "item_name_" ~ loop.index }}" value = "{{ res.product_name }}">';
+                content += '<input type="hidden" name="{{ "amount_" ~ loop.index }}" value="{{ res.cost|int }}">';
+                content += '{% endfor %}';
+
+                content += '<button type="submit">Check out</button>';
+                content += '</form>';
+            }
+            document.getElementById("content_div").innerHTML = content;
     }
 </script>
 <body>
 
 <h4>Welcome to you cart</h4>
 <p style="color:red" id="messagePar"> {{ message }} </p>
-<h3> {{ results|length }} Items in your cart </h3>
-{% for res in results %}
-<div>
-    <b> {{ res.product_name}} </b> <br>
-    Cost :: {{ res.cost}}
-    <script>add_cost_and_productname({{ res.cost }}, '{{ res.product_name }}');</script>
-    <form  action="/cart" method="POST">
-    <input type="text" name="op_type" value="delete" hidden>
-    <input type="text" name="product_id" value ="{{ res._id }}" hidden><br>
-     <input type="submit" value="Click here to remove this product">
-    </form>
-</div>
-<hr>
-{% endfor %}
+<div id="content_div"> </div>
+<script>render_dynamic_template('{{ status }}');</script>
 
-<p id="total_cost"> </p>
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-
-  <!-- Identify your business so that you can collect the payments. -->
-  <input type="hidden" name="business" value="balumatta01@gmail.com">
-
-  <!-- Specify a Buy Now button. -->
-  <input type="hidden" name="cmd" value="_xclick">
-  <!-- Specify details about the item that buyers will purchase. -->
-<input type="hidden" name="item_name" id = "items_id" value="">
-  <input type="hidden" name="amount" id = "amount_id" value="">
-  <input type="hidden" name="currency_code" value="INR">
-
-  <!-- Display the payment button. -->
-  <br><input type="submit" border="0"
-  value="Proceed to Check Out">
-  <img alt="" border="0" width="1" height="1"
-  src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" >
-</form>
-
-<script>return_total_cost();</script>
 </body>
 </html>

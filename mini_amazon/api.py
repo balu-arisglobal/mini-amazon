@@ -36,10 +36,11 @@ def addProducts():
                 if user_details != None:
                     result = prod.add_to_cart(user_details,request.form['id'])
                     cart_product_details = user.get_products_in_usercart(user_details['_id'])
-                    if result['status'] == "success":
-                        return render_template('cart.html', results = cart_product_details)
+                    if cart_product_details['status'] == "success":
+                        return render_template('cart.html', total_count=cart_product_details['total_cost'],results=cart_product_details['result'],
+                                               status="success", message = 'Product Already exists...' if result['status'] == "fail" else "")
                     else:
-                        return render_template('cart.html', results=cart_product_details,message = result['message'])
+                        return render_template('cart.html', message='No Products found', status="failure")
                 else:
                     return render_template('index.html',message="Invalid User. Please login again .......")
             else:
@@ -68,7 +69,8 @@ def addProducts():
 
 @app.route('/listProducts', methods=['GET'])
 def listProducts():
-    return prod.findAll()
+    return render_template('results.html', query='All', results=prod.findAll(), loggedinUser=session.get('user_id'))
+    #return prod.findAll()
 
 
 @app.route('/listUsers', methods=['GET'])
@@ -115,8 +117,14 @@ def products_cart():
     if request.method == 'POST':
        if request.form['op_type'] == "delete":
            results = user.delete_product_from_cart(session.get('user_id'),str(request.form['product_id']))
-           return render_template('cart.html', results=results)
+           if results['status'] == "success":
+               return render_template('cart.html', total_count=results['total_cost'], results=results['result'],status="success")
+           else:
+               return render_template('cart.html', message='No Products found', status="failure")
 
     elif request.method == 'GET':
         results = user.get_products_in_usercart(ObjectId(session.get('user_id')))
-        return render_template('cart.html', results=results)
+        if results['status'] == "success":
+            return render_template('cart.html', total_count = results['total_cost'], results=results['result'], status = "success")
+        else:
+            return render_template('cart.html', message='No Products found', status="failure")

@@ -75,8 +75,12 @@ class User:
 
     def get_products_in_usercart(self, user_id):
         result = self.find_products_in_usercart(user_id)
+        total_cost = 0;
         if len(result) > 0:
-            #for prod_id in result:
-             #   list_of_product_details.append(pr.find_product_by_id(prod_id))
+            for prod_id in result:
+                product = pr.find_product_by_id(prod_id)
+                total_cost += int(product['cost']);
             list_of_product_details = [pr.find_product_by_id(prod_id) for prod_id in result]
-        return list_of_product_details
+            return {'result' : list_of_product_details , 'status' : 'success', 'total_cost': total_cost}
+        else:
+            return {'status': 'fail'}

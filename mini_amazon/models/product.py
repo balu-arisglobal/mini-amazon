@@ -58,7 +58,7 @@ class Product:
             matches = []
             for item in allItems:
                 matches.append(item)
-            return "Product details are " + str(matches)
+            return matches
         else:
             return "Empty List! No data found."
 
