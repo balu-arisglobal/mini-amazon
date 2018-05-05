@@ -1,12 +1,14 @@
 from pymongo import MongoClient
 import re
 from bson.objectid import ObjectId
+import json
 
 class Product:
 
     def __init__(self):
-        client = MongoClient('localhost', 27017)
-        self.db = client.miniamazonDB
+        config = json.load(open("./config.json", "r"))
+        client = MongoClient(config["mongod_host"], config["mongod_port"])
+        self.db = client[config["mongod_dbName"]]
 
 
     def save(self,product):

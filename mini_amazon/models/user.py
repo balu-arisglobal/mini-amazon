@@ -4,14 +4,17 @@ import re
 import jwt
 from bson.objectid import ObjectId
 from product import Product
+import json
+
 
 pr = Product()
 
 class User:
 
     def __init__(self):
-        client = MongoClient('localhost', 27017)
-        self.db = client.miniamazonDB
+        config = json.load(open("./config.json", "r"))
+        client = MongoClient(config["mongod_host"], config["mongod_port"])
+        self.db = client[config["mongod_dbName"]]
 
 
 
